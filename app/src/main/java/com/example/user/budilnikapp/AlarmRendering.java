@@ -5,9 +5,16 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.Format;
@@ -25,23 +32,26 @@ public class AlarmRendering extends BroadcastReceiver {
         StringBuilder stringBuilder=new StringBuilder();
 
         if(bundle!=null && bundle.getBoolean(ONE_TIME, Boolean.FALSE)){
-            stringBuilder.append(ONE_TIME);
-
+            stringBuilder.append("jamanak ");
         }
         Format format=new SimpleDateFormat("hh:mm:ss a");
         stringBuilder.append(format.format(new Date()));
 
+        MediaPlayer mediaPlayer=MediaPlayer.create(context,R.raw.success);
+        mediaPlayer.start();
         Toast.makeText(context, stringBuilder, Toast.LENGTH_LONG).show();
-
         wakeLock.release();
     }
+
+
+
     //5 varkyany mek krknutyun
     public void SetAlarm(Context context) {
         Intent intent=new Intent(context, AlarmRendering.class);
-        intent.putExtra(ONE_TIME,Boolean.FALSE);
+        intent.putExtra(ONE_TIME,Boolean.TRUE);
         PendingIntent pendingIntent=PendingIntent.getBroadcast(context,0,intent,0);
         AlarmManager alarmManager=(AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),5000,pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),1000 * 5,pendingIntent);
     }
 
 
@@ -51,6 +61,7 @@ public class AlarmRendering extends BroadcastReceiver {
         PendingIntent pendingIntent=PendingIntent.getBroadcast(context,0,intent,0);
         AlarmManager alarmManager=(AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
+
     }
 
 
@@ -61,7 +72,6 @@ public class AlarmRendering extends BroadcastReceiver {
         PendingIntent pendingIntent=PendingIntent.getBroadcast(context,0,intent,0);
         AlarmManager alarmManager=(AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),pendingIntent);
-
     }
 
 }
