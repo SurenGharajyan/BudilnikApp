@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BudilnikAPP</string>
+
+    <string name="repeat">Մի քանի անգամ կրկնվող</string>
+    <string name="clean">Ջնջի բոլորը</string>
+    <string name="one_time">Մեկ անգամ</string>
+</resources>
