@@ -18,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.Format;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class AlarmRendering extends BroadcastReceiver {
     final public static String ONE_TIME="one_time";
@@ -48,12 +50,23 @@ public class AlarmRendering extends BroadcastReceiver {
     //5 varkyany mek krknutyun
     public void SetAlarm(Context context) {
         Intent intent=new Intent(context, AlarmRendering.class);
-        intent.putExtra(ONE_TIME,Boolean.TRUE);
+        intent.putExtra(ONE_TIME,true);
         PendingIntent pendingIntent=PendingIntent.getBroadcast(context,0,intent,0);
         AlarmManager alarmManager=(AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),1000 * 5,pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),70000,pendingIntent);
     }
+    public void setTimeRecyclerView(Context context) {
+        Calendar cur_cal = new GregorianCalendar();
+        cur_cal.setTimeInMillis(System.currentTimeMillis());//set the current time and date for this calendar
 
+        Calendar cal = new GregorianCalendar();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 48);
+        Intent intent = new Intent(context, AlarmRendering.class);
+        PendingIntent pintent = PendingIntent.getService(context, 0, intent, 0);
+        AlarmManager alarm = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 5000, pintent);
+    }
 
     //jnjir sax
     public void CancelAlarm(Context context) {
@@ -61,14 +74,13 @@ public class AlarmRendering extends BroadcastReceiver {
         PendingIntent pendingIntent=PendingIntent.getBroadcast(context,0,intent,0);
         AlarmManager alarmManager=(AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
-
     }
 
 
-//mi angam
+    //mi angam
     public void SetOneAlarm(Context context) {
         Intent intent=new Intent(context,AlarmRendering.class);
-        intent.putExtra(ONE_TIME,Boolean.TRUE);
+        intent.putExtra(ONE_TIME,true);
         PendingIntent pendingIntent=PendingIntent.getBroadcast(context,0,intent,0);
         AlarmManager alarmManager=(AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),pendingIntent);
