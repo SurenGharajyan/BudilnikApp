@@ -10,4 +10,7 @@
     <string name="finish">Finish</string>
     <string name="set_the_time">Set the time</string>
     <string name="texter">Texter</string>
+    <string name="all_days">All Days</string>
+    <string name="clear_all_alarms">Clear All Alarms</string>
+    <string name="onetime">One Time</string>
 </resources>

@@ -24,8 +24,10 @@ public class TimeSetActivity extends AppCompatActivity {
         button_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddInformation();
-                setResult(RESULT_OK);
+                Intent intent=new Intent();
+                intent.putExtra("KeyHour",timePicker.getHour());
+                intent.putExtra("KeyMinute",timePicker.getMinute());
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });

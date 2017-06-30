@@ -11,29 +11,28 @@
     tools:context="com.example.user.budilnikapp.MainActivity"
     android:background="#3791ff"
     android:orientation="vertical"
-    >
+    ><!--
 <Button
     android:layout_width="match_parent"
     android:background="#ded276"
     android:id="@+id/repeating"
     android:text="@string/repeat"
     android:layout_height="wrap_content" />
-
+-->
 
     <Button
         android:layout_width="match_parent"
         android:background="#949"
         android:id="@+id/clean_All"
-        android:text="@string/clean"
+        android:text="@string/clear_all_alarms"
         android:layout_height="wrap_content"
-        android:layout_below="@id/repeating"
         />
-
+    <!--android:layout_below="@id/repeating"-->
     <Button
         android:layout_width="match_parent"
         android:background="#9092"
         android:id="@+id/One_Time"
-        android:text="@string/one_time"
+        android:text="@string/onetime"
         android:layout_height="wrap_content"
         android:layout_below="@id/clean_All"
         />

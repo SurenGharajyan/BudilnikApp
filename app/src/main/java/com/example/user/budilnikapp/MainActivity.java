@@ -1,46 +1,41 @@
 package com.example.user.budilnikapp;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
+import android.widget.TimePicker;
 import android.widget.Toast;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    Button button_recurrent_alarm_clock,button_seceding,button_one_time;
-    int l=0;
+    Button button_recurrent_alarm_clock, button_seceding, button_one_time;
+    int myMinute = 0, myHour = 0;
+    final int DIALOG_CONST=123;
     AlarmRendering alarm;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager rec_layoutManager;
-    SharedPreferences SPref;
-    List<Resource_Time_Set_Text> list_recyclerview;
-
-
-
+    List<ResourceTimeSetText> list_recyclerview;
+    final int SETVALUE = 123;
+    AdapterTimeSet adapterTimeSet;
+    RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,138 +43,111 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         init();
         recyclerview_realization();
-
     }
-//realization buttons and alarm
-    private void init(){
-        alarm=new AlarmRendering();
-        button_recurrent_alarm_clock=(Button) findViewById(R.id.repeating);
-        button_recurrent_alarm_clock.setOnClickListener(this);
-        button_one_time=(Button) findViewById(R.id.One_Time);
+
+    //realization buttons and alarm
+    private void init() {
+        alarm = new AlarmRendering();
+        //button_recurrent_alarm_clock = (Button) findViewById(R.id.repeating);
+       // button_recurrent_alarm_clock.setOnClickListener(this);
+        button_one_time = (Button) findViewById(R.id.One_Time);
         button_one_time.setOnClickListener(this);
-        button_seceding=(Button) findViewById(R.id.clean_All);
+        button_seceding = (Button) findViewById(R.id.clean_All);
         button_seceding.setOnClickListener(this);
+        relativeLayout=(RelativeLayout) findViewById(R.id.activity_main);
     }
 
     //realization recycler view
-
-
     private void recyclerview_realization() {
-        recyclerView=(RecyclerView) findViewById(R.id.recyclerview);
-        rec_layoutManager=new LinearLayoutManager(this);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        rec_layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(rec_layoutManager);
         recyclerView.setHasFixedSize(true);
-        list_recyclerview=new ArrayList<>();
-
-    }
-
-    // method set list_recyclerview items
-    @Override
-    protected void onResume() {
-        super.onResume();
-        l++;
-        if(l>1) {
-            if(getSharedPreferenceMinute() < 10 && getSharedPreferenceHours() < 10) {
-                list_recyclerview.add(new Resource_Time_Set_Text("0"+getSharedPreferenceHours() + ":0" + getSharedPreferenceMinute()));
-            } else if (getSharedPreferenceHours() < 10) {
-                list_recyclerview.add(new Resource_Time_Set_Text("0"+getSharedPreferenceHours() + ":" + getSharedPreferenceMinute()));
-            } else if (getSharedPreferenceMinute() < 10) {
-                list_recyclerview.add(new Resource_Time_Set_Text(getSharedPreferenceHours() + ":0" + getSharedPreferenceMinute()));
-            } else {
-                list_recyclerview.add(new Resource_Time_Set_Text(getSharedPreferenceHours() + ":" + getSharedPreferenceMinute()));
-            }
-        }
-        AdapterTimeSet adapterTimeSet=new AdapterTimeSet(list_recyclerview,this);
+        list_recyclerview = new ArrayList<>();
+        adapterTimeSet = new AdapterTimeSet(list_recyclerview, this);
         recyclerView.setAdapter(adapterTimeSet);
+
     }
 
-    int getSharedPreferenceHours() {
-        SPref= PreferenceManager.getDefaultSharedPreferences(this);
-        int hour=SPref.getInt("Key_hour",0);
-        return hour;
-    }
-
-    int getSharedPreferenceMinute() {
-        SPref=PreferenceManager.getDefaultSharedPreferences(this);
-        int minute=SPref.getInt("Key_minute",0);
-        return minute;
-    }
 
     //alarm OnClick
     @Override
     public void onClick(View v) {
-        Context context= this.getApplicationContext();
+        Context context = this.getApplicationContext();
 
         switch (v.getId()) {
-            case R.id.repeating:
-
-                if(alarm!=null){
-                    //Log.d("tag","Mi qani angam");
-                    alarm.SetAlarm(context);
-                }else{
-                    Toast.makeText(context,"Alarm is null", Toast.LENGTH_SHORT).show();
-                }
-
-                break;
             case R.id.clean_All:
+                if (alarm != null) {
+                    alarm.cancelAllAlarms();
+                } else {
+                    Toast.makeText(context, "Alarm is null", Toast.LENGTH_SHORT).show();
+                }
 
-                if(alarm!=null){
-                    //Log.d("tag","chexyal");
-                    alarm.CancelAlarm(MainActivity.this);
-                }else{
-                    Toast.makeText(context,"Alarm is null", Toast.LENGTH_SHORT).show();
-                }
                 break;
-            case R.id.One_Time:
-                if(alarm!=null){
-                    //Log.d("tag","Mi angam");
-                    //alarm.SetOneAlarm(MainActivity.this);
-                    alarm.setTimeRecyclerView(context);
-                }else{
-                    Toast.makeText(context,"Alarm is null", Toast.LENGTH_SHORT).show();
-                }
-                break;
+
         }
     }
 
-
-
-
-//Add-Delete menu items
+    private String construntTime(int hour, int minute) {
+        return (String.valueOf(hour).length() > 1 ? hour : "0" + hour) + ":" + (String.valueOf(minute).length() > 1 ? minute : "0" + minute);
+    }
+    int hour;
+    int minute;
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater=getMenuInflater();
-        menuInflater.inflate(R.menu.add_delete,menu);
-        return true;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SETVALUE && resultCode == RESULT_OK) {
+            hour = data.getIntExtra("KeyHour", 0);
+            minute = data.getIntExtra("KeyMinute", 0);
+            list_recyclerview.add(new ResourceTimeSetText(construntTime(hour, minute)));
+            adapterTimeSet.notifyDataSetChanged();
+        }
+
     }
 
+     public int getHour(){
+        return hour;
+    }
+    public int getMinute() {
+        return minute;
+    }
+    //Add-Delete menu items
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.add_delete, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_alarm:
-                final AlertDialog alertDialog= new AlertDialog.Builder(MainActivity.this).create();
-                alertDialog.setTitle("Do you want create alarm?");
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"Okay", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent=new Intent(MainActivity.this,TimeSetActivity.class);
-                    startActivity(intent);
-                }
-            });
-                alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        alertDialog.dismiss();
-                    }
-                });
-                alertDialog.show();
-                break;
-            case R.id.delete_alarm:
-                list_recyclerview.remove(list_recyclerview.size()-1);
+                showDialog(DIALOG_CONST);
                 break;
         }
         return false;
     }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+          case DIALOG_CONST:
+            TimePickerDialog TPD = new TimePickerDialog(this, myTimeSet, myMinute, myHour, true);
+            return TPD;
+        }
+        return super.onCreateDialog(id);
+    }
+
+
+    TimePickerDialog.OnTimeSetListener myTimeSet = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            myMinute = minute;
+            myHour = hourOfDay;
+            list_recyclerview.add(new ResourceTimeSetText(construntTime(myHour, myMinute)));
+            adapterTimeSet.notifyDataSetChanged();
+        }
+    };
 
 }
